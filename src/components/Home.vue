@@ -1,14 +1,25 @@
+<template>
+    <div class="container">
+        <h1 class="title">Pokemon API</h1>
+        <input class="search" type="text" placeholder="Search some Pokemon..." v-model="queryValue" @input="handleSearch">
+        <div class="pokemon-card">
+            <PokemonItem v-for="pokemon in listPokemon" :key="getIDPokemon(pokemon.url)" :pokemon="pokemon" @select-pokemon="pokemonDetail"/>
+        </div>
+        <button v-show="listPokemon.length >= maxPokemon" class="button" @click="LoadMore_button">Load more</button>
+    </div>
+</template>
+
 <script setup>
+    import { ref, computed } from 'vue';    
     import PokemonItem from './Pokemon/Card.vue';
-    import { ref, computed } from 'vue';
     import { fetchPromise, getIDPokemon } from './PokemonDetail/function' 
 
     let filteredPokemon = ref([]);
     let offset = ref(0);
-    const limit = 36;
+    const maxPokemon = 36;
 
-    const renderPokemon = computed(() => {
-        return filteredPokemon.value.slice(offset, offset.value + limit);
+    const listPokemon = computed(() => {
+        return filteredPokemon.value.slice(offset, offset.value + maxPokemon);
     })
 
     const pokePromise = [];
@@ -57,22 +68,11 @@
         });
         offset.value = 0;
     }
-    function handleLoadMore() {
-        offset.value += limit;
+    function LoadMore_button() {
+        offset.value += maxPokemon;
     }
     getPokemon();
 </script>
-
-<template>
-    <div class="container">
-        <h1 class="title">Pokemon API</h1>
-        <input class="search" type="text" placeholder="Search some Pokemon..." v-model="queryValue" @input="handleSearch">
-        <div class="pokemon-card">
-            <PokemonItem v-for="pokemon in renderPokemon" :key="getIDPokemon(pokemon.url)" :pokemon="pokemon" @select-pokemon="pokemonDetail"/>
-        </div>
-        <button v-show="renderPokemon.length >= limit" class="button" @click="handleLoadMore">Load more</button>
-    </div>
-</template>
 
 <style>
     * {
@@ -125,23 +125,6 @@
         margin: 10px 5px;
         
     }
-
-    /* .categories {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .category {
-        font-size: 13px;
-        border-radius: 5px;
-        font-weight: 500;
-        line-height: 20.8px;
-        margin: 4px 3px;
-        padding: 3px 4px;
-        text-transform: capitalize;
-    } */
 
     .button {
         background-color: rgb(254, 57, 57);

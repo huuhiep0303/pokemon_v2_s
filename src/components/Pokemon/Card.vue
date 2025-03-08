@@ -1,22 +1,3 @@
-<script setup>
-    import { useRouter } from 'vue-router';
-    import { defineProps, defineEmits } from 'vue';
-    import { getIDPokemon } from '../PokemonDetail/function';
-
-    const props = defineProps({
-        pokemon: Object
-    });
-
-    const emit = defineEmits(['select-pokemon']);
-    const router = useRouter();
-
-    const savePokemon_card = () => {
-        sessionStorage.setItem('pokemonData', JSON.stringify(props.pokemon));
-        router.push(`/${props.pokemon.name}`);
-    };  
-
-</script>
-
 <template>
     <div class="card" @click="savePokemon_card">
         <div class="id">#{{ getIDPokemon(props.pokemon.url) }}</div>
@@ -29,6 +10,25 @@
         </div>
     </div>
 </template>
+
+<script setup>
+    import { useRouter } from 'vue-router';
+    import { defineProps, defineEmits } from 'vue';
+    import { getIDPokemon } from '../PokemonDetail/function';
+
+    const props = defineProps({
+        pokemon: Object
+    });
+
+    const emit = defineEmits(['select-pokemon']);
+    const use_router = useRouter();
+
+    const savePokemon_card = () => {
+        sessionStorage.setItem('pokemonData', JSON.stringify(props.pokemon));
+        use_router.push(`/${props.pokemon.name}`);
+    };  
+
+</script>
 
 <style>
     a {
