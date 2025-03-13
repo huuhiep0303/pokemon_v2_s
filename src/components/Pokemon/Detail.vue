@@ -70,51 +70,6 @@
     </div>
 </template>
 
-<script setup>
-    import { ref } from 'vue';
-    import { getIDPokemon, fetchPromise, getIndexName, getUniqueClass } from '../PokemonDetail/function';  
-
-    let pokemon = ref(null);
-    let pokemonArray = ref([]);
-    let cachedPokemon = sessionStorage.getItem("pokemonData");
-
-    if (cachedPokemon) {
-        pokemon.value = JSON.parse(cachedPokemon);
-    }
-
-    let dataPromise = ref(null);
-    let dataEvolution = ref({});
-    async function fetchEvolutionData() {
-        if (pokemon.value) {
-            dataPromise.value = await fetchPromise(pokemon.value.url);
-            const speciesData = await fetchPromise(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.value.name}`);
-            dataEvolution.value = await fetchPromise(speciesData.evolution_chain.url);
-            dataPromise.value.flavor_text = speciesData.flavor_text_entries[1].flavor_text;
-        }
-    }
-    fetchEvolutionData();
-
-    async function fetchEvolutionChain() {
-        await fetchEvolutionData();
-        let evolutionChain = [];
-        let currentEvolution = dataEvolution.value.chain;
-        while (currentEvolution) {
-            evolutionChain.push({
-                name: currentEvolution.species.name,
-                url: currentEvolution.species.url
-            });
-
-            if (currentEvolution.evolves_to.length > 0) {
-                currentEvolution = currentEvolution.evolves_to[0];
-            } else {
-                currentEvolution = null;
-            }
-        }
-        pokemonArray.value = evolutionChain;
-    }
-    fetchEvolutionChain();
-
-</script>
 
 <style>
     h1 {
@@ -281,3 +236,49 @@
         background-color: #FB94A8;
     }
 </style>
+
+<script setup>
+    import { ref } from 'vue';
+    import { getIDPokemon, fetchPromise, getIndexName, getUniqueClass } from '../PokemonDetail/function';  
+
+    let pokemon = ref(null);
+    let pokemonArray = ref([]);
+    let cachedPokemon = sessionStorage.getItem("pokemonData");
+
+    if (cachedPokemon) {
+        pokemon.value = JSON.parse(cachedPokemon);
+    }
+
+    let dataPromise = ref(null);
+    let dataEvolution = ref({});
+    async function fetchEvolutionData() {
+        if (pokemon.value) {
+            dataPromise.value = await fetchPromise(pokemon.value.url);
+            const speciesData = await fetchPromise(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.value.name}`);
+            dataEvolution.value = await fetchPromise(speciesData.evolution_chain.url);
+            dataPromise.value.flavor_text = speciesData.flavor_text_entries[1].flavor_text;
+        }
+    }
+    fetchEvolutionData();
+
+    async function fetchEvolutionChain() {
+        await fetchEvolutionData();
+        let evolutionChain = [];
+        let currentEvolution = dataEvolution.value.chain;
+        while (currentEvolution) {
+            evolutionChain.push({
+                name: currentEvolution.species.name,
+                url: currentEvolution.species.url
+            });
+
+            if (currentEvolution.evolves_to.length > 0) {
+                currentEvolution = currentEvolution.evolves_to[0];
+            } else {
+                currentEvolution = null;
+            }
+        }
+        pokemonArray.value = evolutionChain;
+    }
+    fetchEvolutionChain();
+
+</script>

@@ -67,3 +67,5 @@ export function getUniqueClass(name) {
     }
     return text;
 }
+
+

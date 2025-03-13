@@ -1,78 +1,15 @@
 <template>
-    <div class="container">
-        <h1 class="title">Pokemon API</h1>
-        <input class="search" type="text" placeholder="Search some Pokemon..." v-model="queryValue" @input="handleSearch">
+    <div class="home">
+        <h3 class="title">Pokemon API</h3>
+        <input class="search-button" type="text" placeholder="Search some Pokemon..." @input="search_pkm" v-model="pokemonQuery">
+
         <div class="pokemon-card">
-            <PokemonItem v-for="pokemon in listPokemon" :key="getIDPokemon(pokemon.url)" :pokemon="pokemon" @select-pokemon="pokemonDetail"/>
+            <pokemonCard v-for="pokemon in listPokemon" :key="getIDPokemon(pokemon.url)" :pokemon="pokemon" @select-pokemon="pokemonDetail"/>``
         </div>
+
         <button v-show="listPokemon.length >= maxPokemon" class="button" @click="LoadMore_button">Load more</button>
     </div>
 </template>
-
-<script setup>
-    import { ref, computed } from 'vue';    
-    import PokemonItem from './Pokemon/Card.vue';
-    import { fetchPromise, getIDPokemon } from './PokemonDetail/function' 
-
-    let filteredPokemon = ref([]);
-    let offset = ref(0);
-    const maxPokemon = 36;
-
-    const listPokemon = computed(() => {
-        return filteredPokemon.value.slice(offset, offset.value + maxPokemon);
-    })
-
-    const pokePromise = [];
-    let pokemon = JSON.parse(localStorage.getItem("pokemonData")) || [];
-    filteredPokemon.value = pokemon;
-    async function getPokemon() {
-        if (pokemon.length) {
-            filteredPokemon.value = pokemon;
-        } else {
-            const response = await fetchPromise("https://pokeapi.co/api/v2/pokemon/?.value=0&limit=898");
-            if (response && response.results) {
-                pokemon = response.results;
-                filteredPokemon.value = pokemon;
-                localStorage.setItem("pokemonData", JSON.stringify(pokemon));
-            }
-        }
-    };
-    function fetchPokemonType() {
-        if (pokemon){
-            pokemon.forEach(pokemon => {
-                const promise = fetchPromise(pokemon.url);
-                pokePromise.push(promise);
-            });
-        }
-        return pokePromise;
-    }
-    async function getPokemonType() {
-        const pokeDataPromise = fetchPokemonType();
-        const pokeData = await Promise.all(pokeDataPromise);
-        pokeData.forEach((item, index) =>
-            {
-                if (pokemon[index]) {
-                    pokemon[index].types = item.types.map(item => item.type.name);
-                }
-            }
-        )
-        filteredPokemon.value = [...pokemon];
-        localStorage.setItem("pokemonData", JSON.stringify(pokemon));
-    }
-    getPokemonType();
-
-    let queryValue = ref('');
-    function handleSearch() {
-        filteredPokemon.value = pokemon.filter((pokemon) => {
-            return pokemon.name.includes(queryValue.value.toLowerCase());
-        });
-        offset.value = 0;
-    }
-    function LoadMore_button() {
-        offset.value += maxPokemon;
-    }
-    getPokemon();
-</script>
 
 <style>
     * {
@@ -81,7 +18,7 @@
         margin: 0;
     }
 
-    .container {
+    .home {
         /* margin: 0 auto; */
         /* max-width: 1400px; */
         margin-bottom: 30px;
@@ -103,7 +40,7 @@
         margin-top: 40px;
     }
 
-    .search {
+    .search-button {
         background-color: #fff;
         border-radius: 30px;
         border: grey solid 1px;
@@ -231,3 +168,68 @@
         }
     }
 </style>
+
+<script setup>
+    import { ref, computed } from 'vue';    
+    import pokemonCard from './Pokemon/Card.vue';
+    import { fetchPromise, getIDPokemon } from './PokemonDetail/function' 
+
+    let filteredPokemon = ref([]);
+    let offset = ref(0);
+    const maxPokemon = 36;
+
+    const listPokemon = computed(() => {
+        return filteredPokemon.value.slice(offset, offset.value + maxPokemon);
+    })
+
+    const pokePromise = [];
+    let pokemon = JSON.parse(localStorage.getItem("pokemonData")) || [];
+    filteredPokemon.value = pokemon;
+    async function getPokemon() {
+        if (pokemon.length) {
+            filteredPokemon.value = pokemon;
+        } else {
+            const response = await fetchPromise("https://pokeapi.co/api/v2/pokemon/?.value=0&limit=898");
+            if (response && response.results) {
+                pokemon = response.results;
+                filteredPokemon.value = pokemon;
+                localStorage.setItem("pokemonData", JSON.stringify(pokemon));
+            }
+        }
+    };
+    function fetchPokemonType() {
+        if (pokemon){
+            pokemon.forEach(pokemon => {
+                const promise = fetchPromise(pokemon.url);
+                pokePromise.push(promise);
+            });
+        }
+        return pokePromise;
+    }
+    async function getPokemonType() {
+        const pokeDataPromise = fetchPokemonType();
+        const pokeData = await Promise.all(pokeDataPromise);
+        pokeData.forEach((item, index) =>
+            {
+                if (pokemon[index]) {
+                    pokemon[index].types = item.types.map(item => item.type.name);
+                }
+            }
+        )
+        filteredPokemon.value = [...pokemon];
+        localStorage.setItem("pokemonData", JSON.stringify(pokemon));
+    }
+    getPokemonType();
+
+    let pokemonQuery = ref('');
+    function search_pkm() {
+        filteredPokemon.value = pokemon.filter((pokemon) => {
+            return pokemon.name.includes(pokemonQuery.value.toLowerCase());
+        });
+        offset.value = 0;
+    }
+    function LoadMore_button() {
+        offset.value += maxPokemon;
+    }
+    getPokemon();
+</script>
