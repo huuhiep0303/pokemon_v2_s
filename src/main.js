@@ -3,7 +3,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import { createWebHistory, createRouter } from 'vue-router';
-import Detail from './components/Pokemon/Detail.vue';
+import Detail from './components/PokemonDetail/Detail.vue';
 import Home from './components/Home.vue';
 
 

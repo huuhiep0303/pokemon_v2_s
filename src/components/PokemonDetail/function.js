@@ -1,3 +1,27 @@
+export function getIndexName(name) {
+    const map = {
+        "hp": "hp",
+        "attack": "atk",
+        "defense": "def",
+        "special-attack": "spa",
+        "special-defense": "spd",
+        "speed": "spd"
+    };
+    return map[name] || null;
+}
+
+export function getUniqueClass(name) {
+    const map = {
+        "hp": "hp",
+        "attack": "atk",
+        "defense": "def",
+        "special-attack": "spa",
+        "special-defense": "spd-1",
+        "speed": "spd-2"
+    };
+    return map[name] || null;
+}
+
 export function getIDPokemon(url) {
     const parts = url.split('/'); 
     return parseInt(parts[parts.length - 2], 10);
@@ -13,59 +37,4 @@ export async function fetchPromise(URL) {
         return null;
     }
 }
-
-export function getIndexName(name) {
-    let text;
-    switch (name) {
-        case "hp":
-            text = "hp";
-            break;
-        case "attack":
-            text = "atk";
-            break;
-        case "defense":
-            text = "def";
-            break;
-        case "special-attack":
-            text = "spa";
-            break;
-        case "special-defense":
-            text = "spd";
-            break;
-        case "speed":
-            text = "spd";
-            break;
-        default:
-            text = null;
-    }
-    return text;
-}
-
-export function getUniqueClass(name) {
-    let text;
-    switch (name) {
-        case "hp":
-            text = "hp";
-            break;
-        case "attack":
-            text = "atk";
-            break;
-        case "defense":
-            text = "def";
-            break;
-        case "special-attack":
-            text = "spa";
-            break;
-        case "special-defense":
-            text = "spd-1";
-            break;
-        case "speed":
-            text = "spd-2";
-            break;
-        default:
-            text = null;
-    }
-    return text;
-}
-
 

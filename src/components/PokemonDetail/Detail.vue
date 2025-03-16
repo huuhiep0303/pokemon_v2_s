@@ -239,7 +239,7 @@
 
 <script setup>
     import { ref } from 'vue';
-    import { getIDPokemon, fetchPromise, getIndexName, getUniqueClass } from '../PokemonDetail/function';  
+    import { getIDPokemon, fetchPromise, getIndexName, getUniqueClass } from './function';  
 
     let pokemon = ref(null);
     let pokemonArray = ref([]);
